@@ -1,0 +1,20 @@
+# mctl yaml
+image: mosaicml/research:latest
+parameters:
+  instance_types:
+  - cota-g8-3080
+  seed:
+  - 5
+  workers_per_gpu:
+  - 8
+
+command: >-
+  git clone git@github.com:jacobfulano/composer
+
+  cd composer
+
+  git checkout clr_warmup
+
+  pip install -e .
+  
+  python examples/run_mosaic_trainer.py -f composer/yamls/models/resnet56_cifar10.yaml --loggers.wandb.project jacob_test --loggers.wandb.name test_run
