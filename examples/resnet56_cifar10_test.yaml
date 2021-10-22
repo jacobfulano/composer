@@ -17,4 +17,4 @@ command: >-
 
   pip install mosaicml
   
-  python examples/run_mosaic_trainer.py -f composer/yamls/models/resnet56_cifar10.yaml --loggers.wandb.project jacob_test --loggers.wandb.name test_run
+  python examples/run_mosaic_trainer.py -f composer/yamls/models/resnet56_cifar10.yaml --loggers.wandb.project jacob_test --loggers.wandb.name test_run --datadir ~/datasets
