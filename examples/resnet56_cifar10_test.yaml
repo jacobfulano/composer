@@ -15,6 +15,6 @@ command: >-
 
   git checkout clr_warmup
 
-  pip install -e .
+  pip install composer
   
   python examples/run_mosaic_trainer.py -f composer/yamls/models/resnet56_cifar10.yaml --loggers.wandb.project jacob_test --loggers.wandb.name test_run
