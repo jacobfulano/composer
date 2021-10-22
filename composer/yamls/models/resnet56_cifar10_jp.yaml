@@ -79,4 +79,4 @@ command: >-
 
   pip install -e .
   
-  python examples/run_mosaic_trainer.py -f composer/models/resnet56_cifar10_jp.yaml --loggers.wandb.project jacob_test --loggers.wandb.name test_run --algorithms label_smoothing  --algorithms.label_smoothing.alpha 0.1
+  python examples/run_mosaic_trainer.py -f composer/yamls/models/resnet56_cifar10_jp.yaml --loggers.wandb.project jacob_test --loggers.wandb.name test_run --algorithms label_smoothing  --algorithms.label_smoothing.alpha 0.1
