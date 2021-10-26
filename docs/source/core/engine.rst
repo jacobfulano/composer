@@ -7,7 +7,7 @@ The order of algorithms can matter significantly during composition. For example
 
 .. note::
 
-    The design of the :class:`Engine` will be changed in future releases to accomdate more complexity as we investigation the composition of algorithms.
+    The design of the :class:`Engine` will be changed in future releases to accommodate more complexity as we investigation the composition of algorithms.
 
 
 Currently, the following passes are registered:
