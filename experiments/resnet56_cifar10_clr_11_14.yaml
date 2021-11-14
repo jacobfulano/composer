@@ -20,6 +20,8 @@ command: >-
 
   git checkout clr_warmup
 
-  pip install mosaicml
+  pip install -e .
+  pip install wandb
+  pip install --upgrade yahp
   
   python examples/run_mosaic_trainer.py -f composer/yamls/models/resnet56_cifar10_jp.yaml --loggers wandb --loggers.wandb.project jacob_test --loggers.wandb.name test_run
