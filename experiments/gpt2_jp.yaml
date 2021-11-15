@@ -1,0 +1,39 @@
+---
+# This is for a v100 instance on AWS with resnet50
+image: mosaicml/research:latest
+
+parameters:
+  device:
+    - gpu
+  device.gpu.n_gpus:
+    - 8
+  dataloader.num_workers:
+    - 8
+  instance_types:
+    - p3.16xlarge
+  grad_accum:
+    - 16
+  precision:
+    - amp
+  train_dataset.lm.datadir:
+    - /mnt/aws/datasets/openwebtext_saved
+  val_dataset.lm.datadir:
+    - /mnt/aws/datasets/openwebtext_saved
+  seed:
+  - 5
+
+  callbacks: # List of: profiler, speed_monitor, lr_monitor, classifier_metrics
+    - speed_monitor lr_monitor
+
+command: >-
+  git clone git@github.com:jacobfulano/composer
+
+  cd composer
+
+  git checkout clr_warmup
+
+  pip install -e .
+  pip install wandb
+  pip install --upgrade yahp
+  
+  python examples/run_mosaic_trainer.py -f composer/yamls/models/gtp2_83m_jp_v1.yaml --loggers wandb --loggers.wandb.project jacob_gpt2 --loggers.wandb.name test_run --callbacks.speed_monitor.window_size 10
