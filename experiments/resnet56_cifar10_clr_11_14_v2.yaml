@@ -1,0 +1,25 @@
+# mctl yaml
+image: mosaicml/research:latest
+parameters:
+  instance_types:
+  - cota-g8-3080
+  seed:
+  - 5
+  workers_per_gpu:
+  - 8
+
+  callbacks: # List of: profiler, speed_monitor, lr_monitor, classifier_metrics
+    - speed_monitor lr_monitor
+
+command: >-
+  git clone git@github.com:jacobfulano/composer
+
+  cd composer
+
+  git checkout clr_warmup
+
+  pip install -e .
+  pip install wandb
+  pip install --upgrade yahp
+  
+  python examples/run_mosaic_trainer.py -f composer/yamls/models/resnet56_cifar10_jp_v2.yaml --loggers wandb --loggers.wandb.project jacob_test --loggers.wandb.name test_run --callbacks.speed_monitor.window_size 100
