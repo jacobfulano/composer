@@ -7,10 +7,6 @@ parameters:
   - 5
   workers_per_gpu:
   - 8
-  train_dataset.cifar10.datadir:
-    - /localdisk/CIFAR10
-  val_dataset.cifar10.datadir:
-    - /localdisk/CIFAR10
 
   callbacks: # List of: profiler, speed_monitor, lr_monitor, classifier_metrics
   - speed_monitor lr_monitor
