@@ -17,8 +17,6 @@ parameters:
   - linear
   schedulers.warmup.warmup_factor: 
   - 0
-  schedulers.warmup.verbose: 
-  - false
   schedulers.warmup.interval: 
   - step
   schedulers.cosine_warmrestart.T_0:
