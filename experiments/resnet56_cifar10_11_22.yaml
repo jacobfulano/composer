@@ -11,17 +11,22 @@ parameters:
   callbacks: # List of: profiler, speed_monitor, lr_monitor, classifier_metrics
   - speed_monitor lr_monitor
 
-  schedulers:
-  - warmup:
-      warmup_iters: "5ep"
-      warmup_method: linear
-      warmup_factor: 0
-      verbose: false
-      interval: step
-  - cosine_warmrestart:
-      T_0: "20ep"
-      eta_min: 0.001
-      interval: epoch
+  schedulers.warmup.warmup_iters:
+  - "5ep"
+  schedulers.warmup.warmup_method: 
+  - linear
+  schedulers.warmup.warmup_factor: 
+  - 0
+  schedulers.warmup.verbose: 
+  - false
+  schedulers.warmup.interval: 
+  - step
+  schedulers.cosine_warmrestart.T_0:
+  - "20ep"
+  schedulers.cosine_warmrestart.eta_min: 
+  - 0.001
+  schedulers.cosine_warmrestart.interval: 
+  - step
 
 command: >-
   git clone git@github.com:jacobfulano/composer
@@ -34,4 +39,4 @@ command: >-
   pip install wandb
   pip install --upgrade yahp
   
-  python examples/run_mosaic_trainer.py -f composer/yamls/models/resnet56_cifar10.yaml --loggers wandb --loggers.wandb.project jacob_test --loggers.wandb.name test_run --callbacks.speed_monitor.window_size 10
+  python examples/run_mosaic_trainer.py -f composer/yamls/models/resnet56_cifar10_clr.yaml --loggers wandb --loggers.wandb.project jacob_test --loggers.wandb.name test_run --callbacks.speed_monitor.window_size 10
