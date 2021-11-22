@@ -22,7 +22,7 @@ parameters:
   schedulers.warmup.interval: 
   - step
   schedulers.cosine_warmrestart.T_0:
-  - "20ep"
+  - "10ep"
   schedulers.cosine_warmrestart.eta_min: 
   - 0.001
   schedulers.cosine_warmrestart.interval: 
