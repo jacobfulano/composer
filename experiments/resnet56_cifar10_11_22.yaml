@@ -12,10 +12,8 @@ parameters:
   - speed_monitor lr_monitor
   schedulers.warmup.warmup_method: 
   - linear
-  schedulers.warmup.interval: 
-  - step
   schedulers.cosine_warmrestart.interval: 
-  - step
+  - epoch
 
 command: >-
   git clone git@github.com:jacobfulano/composer
@@ -28,4 +26,4 @@ command: >-
   pip install wandb
   pip install --upgrade yahp
   
-  python examples/run_mosaic_trainer.py -f composer/yamls/models/resnet56_cifar10_clr.yaml --loggers wandb --loggers.wandb.project jacob_test --loggers.wandb.name test_run --schedulers.cosine_warmrestart.eta_min 0.001 --callbacks.speed_monitor.window_size 10 --schedulers.cosine_warmrestart.T_0 10ep
+  python examples/run_mosaic_trainer.py -f composer/yamls/models/resnet56_cifar10_clr.yaml --loggers wandb --loggers.wandb.project jacob_test --loggers.wandb.name test_run --schedulers.cosine_warmrestart.eta_min 0.001 --callbacks.speed_monitor.window_size 10 --schedulers.cosine_warmrestart.T_0 "10ep"
