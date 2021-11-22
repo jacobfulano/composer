@@ -7,12 +7,13 @@ parameters:
   - 5
   workers_per_gpu:
   - 8
+  train_dataset.cifar10.datadir:
+    - /localdisk/CIFAR10
+  val_dataset.cifar10.datadir:
+    - /localdisk/CIFAR10
 
   callbacks: # List of: profiler, speed_monitor, lr_monitor, classifier_metrics
   - speed_monitor lr_monitor
-  callbacks.speed_monitor.window_size:
-  - 10
-
   schedulers.warmup.warmup_iters:
   - "5ep"
   schedulers.warmup.warmup_method: 
@@ -35,4 +36,4 @@ command: >-
   pip install wandb
   pip install --upgrade yahp
   
-  python examples/run_mosaic_trainer.py -f composer/yamls/models/resnet56_cifar10_clr.yaml --loggers wandb --loggers.wandb.project jacob_test --loggers.wandb.name test_run --schedulers.cosine_warmrestart.eta_min 0.001
+  python examples/run_mosaic_trainer.py -f composer/yamls/models/resnet56_cifar10_clr.yaml --loggers wandb --loggers.wandb.project jacob_test --loggers.wandb.name test_run --schedulers.cosine_warmrestart.eta_min 0.001 --callbacks.speed_monitor.window_size 10
