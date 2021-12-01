@@ -27,7 +27,7 @@ install_requires = [
     "torchvision>=0.9.0",
     "torch>=1.9",
     "argparse>=1.4.0",
-    "yahp>=0.0.12",
+    "yahp>=0.0.13",
 ]
 extra_deps = {}
 
@@ -71,7 +71,7 @@ extra_deps['all'] = set(dep for deps in extra_deps.values() for dep in deps)
 
 setup(
     name="mosaicml",
-    version="0.3.0",
+    version="0.3.1",
     author="MosaicML",
     author_email="team@mosaicml.com",
     description="composing methods for ML training efficiency",
@@ -83,7 +83,7 @@ setup(
         "composer": ['py.typed'],
         "": package_files('composer/yamls'),
     },
-    packages=setuptools.find_packages(include=["composer"]),
+    packages=setuptools.find_packages(exclude=["tests*"]),
     classifiers=[
         "Programming Language :: Python :: 3",
     ],

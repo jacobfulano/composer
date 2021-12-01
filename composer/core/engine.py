@@ -96,8 +96,15 @@ class Engine():
         Returns:
             Dict[str, Trace]: dictionary of trace for each algorithm.
         """
-        traces = self._run_algorithms(event)
-        self._run_callbacks(event)
+        if event == Event.INIT:
+            # For the INIT event, run the callbacks first to initialize the loggers
+            # For other events, run the algorithms first, so the callbacks have the state
+            # after algorithms modify it
+            self._run_callbacks(event)
+            traces = self._run_algorithms(event)
+        else:
+            traces = self._run_algorithms(event)
+            self._run_callbacks(event)
         return traces
 
     def _run_algorithms(
@@ -179,8 +186,4 @@ class Engine():
         event = Event(event)
 
         for cb in self.callbacks:
-            if not hasattr(cb, event.value):
-                raise ValueError(f'f{cb} has no method for event {event}')
-            else:
-                f = getattr(cb, event.value)
-                f(self.state, self.logger)
+            cb.run_event(event, self.state, self.logger)
