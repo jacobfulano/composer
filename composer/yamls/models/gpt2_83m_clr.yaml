@@ -69,7 +69,7 @@ schedulers:
       warmup_iters: 110ba
   - cosine_warmrestart:
       T_0: "20ep"
-      eta_min: 0.001
+      eta_min: 0.0001
       interval: step
       verbose: True
 loggers:
