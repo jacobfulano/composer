@@ -8,7 +8,7 @@ integrations:
     git_repo: jacobfulano/composer # ex. mosaicml/composer
     git_branch: bert-sweep
     path: mnist-test # The folder to clone the code into
-command: composer mnist-test/entrypoint.py -f /mnt/config/parameters.yaml
+command: python examples/run_composer_trainer.py -f composer/yamls/models/classify_mnist_cpu.yaml --algorithms label_smoothing --alpha 0.1
 parameters:
   train_dataset:
     mnist:
