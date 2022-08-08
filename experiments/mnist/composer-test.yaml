@@ -2,13 +2,13 @@ run_name: classify-mnist
 platform: r1z2
 gpu_type: a100_40gb
 gpu_num: 1
-image: mosaicml/composer:0.8.0 # Use the MosaicML image that has Composer pre-installed
+image: mosaicml/composer:0.8.2 # mosaicml/pytorch_internal:latest # Use the MosaicML image that has Composer pre-installed
 integrations:
   - integration_type: git_repo
     git_repo: jacobfulano/composer # ex. mosaicml/composer
     git_branch: bert-sweep
-    path: mnist-test # The folder to clone the code into
-command: python examples/run_composer_trainer.py -f composer/yamls/models/classify_mnist_cpu.yaml --algorithms label_smoothing --alpha 0.1
+    path: cfork # The folder to clone the code into
+command: pwd; set -x; cd cfork; composer examples/run_composer_trainer.py -f composer/yamls/models/classify_mnist_cpu.yaml --algorithms label_smoothing --alpha 0.1
 parameters:
   train_dataset:
     mnist:
