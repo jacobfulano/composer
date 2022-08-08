@@ -8,8 +8,18 @@ integrations:
     git_repo: jacobfulano/composer # ex. mosaicml/composer
     git_branch: bert-sweep
     path: cfork # The folder to clone the code into
-command: pwd; set -x; cd cfork; composer examples/run_composer_trainer.py -f composer/yamls/models/classify_mnist_cpu.yaml --algorithms label_smoothing --alpha 0.1
+    pip_install: .[all]
+  - integration_type: wandb
+    project: mnist-try
+    group: testing
+    entity: mosaic-ml
+    tags:
+      - hello
+command: pwd; set -x; cd cfork; composer examples/run_composer_trainer.py -f /mnt/config/parameters.yaml --algorithms label_smoothing --alpha 0.1
 parameters:
+  loggers:
+    wandb:
+      name: test
   train_dataset:
     mnist:
       is_train: true
