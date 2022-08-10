@@ -1,19 +1,19 @@
 # the run name is a unique identifier for the run
 # this will also be used as the default name for tensorboard, checkpoint directories, etc
-run_name: bert-base-128-mlm-40-test1
-gpu_type: a100_80gb
+run_name: bert-test-repo
+gpu_type: a100_40gb
 gpu_num: 8
-platform: r1z1
+platform: r7z2
 image: mosaicml/pytorch_internal:latest # mosaicml/composer:0.8.0 #
 integrations:
   - integration_type: git_repo
-    git_repo: alextrott16/cfork # ex. mosaicml/composer
-    git_branch: dc-2022-07-v2
+    git_repo: jacobfulano/composer # ex. mosaicml/composer
+    git_branch: bert-sweep
     path: cfork # The folder to clone the code into
     pip_install: .[all] # pip installs repo. Need [all] this for NLP dependencies, in your git repo
   - integration_type: wandb
     project: bert-mlm-sweep
-    group: mlm-40
+    group: testing
     entity: jportes
     tags:
       - mlm-40
@@ -76,20 +76,20 @@ parameters:
      t_warmup: 0.06dur                # Point when peak learning rate is reached
      alpha_f: 0.02
 
-  max_duration: 50500sp              # previously 275184000sp  # Subsample the training data for 275M samples
-  train_batch_size: 4096              # Number of training examples to use per update
-  eval_batch_size: 2048
+  max_duration: 80500sp              # previously 275184000sp  # Subsample the training data for 275M samples
+  train_batch_size: 2048              # Number of training examples to use per update
+  eval_batch_size: 1024
 
   precision: amp                      # Use mixed-precision training
   grad_clip_norm: -1.0                # Turn off gradient clipping
   grad_accum: 'auto'
 
   save_folder: bert_checkpoints # The local directory for checkpoints, subsequently loaded to cloud
-  save_interval: 100ba # Save checkpoints every 100 (previously 3500) batches
+  save_interval: 35ba # Save checkpoints every 100 (previously 3500) batches
 
   loggers:
     wandb:
-      name: bert-base-128-mlm-40
+      name: bert-test-fork
     object_store:
       object_store_hparams:
         s3:
