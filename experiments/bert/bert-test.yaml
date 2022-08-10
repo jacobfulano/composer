@@ -1,0 +1,99 @@
+# the run name is a unique identifier for the run
+# this will also be used as the default name for tensorboard, checkpoint directories, etc
+run_name: bert-base-128-example
+gpu_type: a100_80gb
+gpu_num: 8
+platform: r1z1
+image: mosaicml/composer:0.8.0
+integrations:
+  - integration_type: git_repo
+    git_repo: jacobfulano/composer # ex. mosaicml/composer
+    git_branch: bert-sweep
+    path: cfork # The folder to clone the code into
+    pip_install: .[all]
+  - integration_type: wandb
+    project: bert-mlm-sweep
+    group: test
+    entity: jportes
+    tags:
+      - hello
+command: set -x -e; cd cfork; examples/run_composer_trainer.py -f /mnt/config/parameters.yaml
+parameters:
+  # Use a bert-base model, initialized from scratch
+  model:
+   bert:
+     use_pretrained: false
+     tokenizer_name: bert-base-uncased
+     pretrained_model_name: bert-base-uncased
+
+  # Train the model on the English C4 corpus
+  train_dataset:
+   streaming_c4:
+     remote: s3://allenai-c4/mds/1/
+     local: /tmp/mds-cache/mds-c4/
+     split: train
+     shuffle: true
+     tokenizer_name: bert-base-uncased
+     max_seq_len: 128
+     group_method: truncate
+     mlm: true
+     mlm_probability: 0.15
+
+  # Periodically evaluate the LanguageCrossEntropy and Masked Accuracy
+  # on the validation split of the dataset.
+  evaluators:
+   evaluator:
+     label: bert_pre_training
+     eval_dataset:
+       streaming_c4:
+         remote: s3://allenai-c4/mds/1/
+         local: /tmp/mds-cache/mds-c4/
+         split: val
+         shuffle: false
+         tokenizer_name: bert-base-uncased
+         max_seq_len: 128
+         group_method: truncate
+         mlm: true
+         mlm_probability: 0.15
+     metric_names:
+       - LanguageCrossEntropy
+       - MaskedAccuracy
+  # Run evaluation after every 1000 training steps
+  eval_interval: 1000ba
+
+  # Use the decoupled AdamW optimizer with learning rate warmup
+  optimizers:
+   decoupled_adamw:
+     lr: 5.0e-4                       # Peak learning rate
+     betas:
+       - 0.9
+       - 0.98
+     eps: 1.0e-06
+     weight_decay: 1.0e-5             # Amount of weight decay regularization
+  schedulers:
+   linear_decay_with_warmup:
+     t_warmup: 0.06dur                # Point when peak learning rate is reached
+     alpha_f: 0.02
+
+  max_duration: 275184000sp           # Subsample the training data for 275M samples
+  train_batch_size: 4000              # Number of training examples to use per update
+  eval_batch_size: 2000
+
+  precision: amp                      # Use mixed-precision training
+  grad_clip_norm: -1.0                # Turn off gradient clipping
+  grad_accum: 'auto'
+
+  loggers:
+    wandb:
+      name: bert-test
+    object_store:
+      object_store_hparams:
+        s3:
+          bucket: mosaicml-internal-checkpoints-bert  # replace with your bucket here
+    tensorboard:
+      flush_interval: 1
+      rank_zero_only: false
+    progress_bar:                     # Show output training progress updates
+      log_to_console: true
+      progress_bar: false             # Disable TQDM progress bars for batch jobs
+      console_log_level: batch        # Print every batch
