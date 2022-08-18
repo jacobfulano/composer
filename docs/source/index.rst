@@ -57,7 +57,6 @@ Composer is part of the broader Machine Learning community, and we welcome any c
    examples/functional_api.ipynb
    examples/medical_image_segmentation.ipynb
    examples/custom_speedup_methods.ipynb
-   examples/nlp_models.ipynb
    examples/ffcv_dataloaders.ipynb
    examples/huggingface_models.ipynb
    examples/migrate_from_ptl.ipynb
@@ -67,6 +66,8 @@ Composer is part of the broader Machine Learning community, and we welcome any c
    examples/checkpoint_autoresume.ipynb
    examples/training_without_local_storage.ipynb
    examples/exporting_for_inference.ipynb
+   examples/glue/glue_entrypoint.ipynb
+   examples/TPU_Training_in_composer.ipynb
 
 .. toctree::
    :hidden:
