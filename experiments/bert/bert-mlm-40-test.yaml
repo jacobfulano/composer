@@ -1,6 +1,6 @@
 # the run name is a unique identifier for the run
 # this will also be used as the default name for tensorboard, checkpoint directories, etc
-run_name: bert-128-tr1024-ev512-mlm-40
+run_name: bert-test-fulano-repo-1024-512
 gpu_type: a100_40gb
 gpu_num: 8
 platform: r7z2
@@ -12,14 +12,14 @@ integrations:
     path: cfork # The folder to clone the code into
     pip_install: .[all] # pip installs repo. Need [all] this for NLP dependencies, in your git repo
   - integration_type: wandb
-    project: bert-sweep-masking-ratio
-    group: mlm-40
+    project: bert-mlm-sweep
+    group: testing
     entity: jportes
     tags:
       - mlm-40
 command: set -x -e; cd cfork; composer examples/run_composer_trainer.py -f /mnt/config/parameters.yaml
 parameters:
-  seed: 1999
+  seed: 2022
   # Use a bert-base model, initialized from scratch
   model:
    bert:
@@ -60,7 +60,7 @@ parameters:
        - LanguageCrossEntropy
        - MaskedAccuracy
   # Run evaluation after every 1000 training steps
-  eval_interval: 1000ba # prev 1000ba
+  eval_interval: 30ba # prev 1000ba
 
   # Use the decoupled AdamW optimizer with learning rate warmup
   optimizers:
@@ -76,7 +76,7 @@ parameters:
      t_warmup: 0.06dur                # Point when peak learning rate is reached
      alpha_f: 0.02
 
-  max_duration: 275184000sp              # previously 275184000sp  # Subsample the training data for 275M samples
+  max_duration: 80500sp              # previously 275184000sp  # Subsample the training data for 275M samples
   train_batch_size: 1024              # Number of training examples to use per update
   eval_batch_size: 512
 
@@ -89,7 +89,7 @@ parameters:
 
   loggers:
     wandb:
-      name: bert-128-tr1024-ev512-mlm-40
+      name: bert-test-jacobfulano-1024-512eval
     object_store:
       object_store_hparams:
         s3:

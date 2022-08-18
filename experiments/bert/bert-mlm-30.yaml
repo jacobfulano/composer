@@ -1,6 +1,6 @@
 # the run name is a unique identifier for the run
 # this will also be used as the default name for tensorboard, checkpoint directories, etc
-run_name: bert-128-tr1024-ev512-mlm-40
+run_name: bert-128-tr1024-ev512-mlm-30
 gpu_type: a100_40gb
 gpu_num: 8
 platform: r7z2
@@ -13,10 +13,10 @@ integrations:
     pip_install: .[all] # pip installs repo. Need [all] this for NLP dependencies, in your git repo
   - integration_type: wandb
     project: bert-sweep-masking-ratio
-    group: mlm-40
+    group: mlm-30
     entity: jportes
     tags:
-      - mlm-40
+      - mlm-30
 command: set -x -e; cd cfork; composer examples/run_composer_trainer.py -f /mnt/config/parameters.yaml
 parameters:
   seed: 1999
@@ -38,7 +38,7 @@ parameters:
      max_seq_len: 128
      group_method: truncate
      mlm: true
-     mlm_probability: 0.40
+     mlm_probability: 0.30
 
   # Periodically evaluate the LanguageCrossEntropy and Masked Accuracy
   # on the validation split of the dataset.
@@ -55,7 +55,7 @@ parameters:
          max_seq_len: 128
          group_method: truncate
          mlm: true
-         mlm_probability: 0.40
+         mlm_probability: 0.30
      metric_names:
        - LanguageCrossEntropy
        - MaskedAccuracy
@@ -89,7 +89,7 @@ parameters:
 
   loggers:
     wandb:
-      name: bert-128-tr1024-ev512-mlm-40
+      name: bert-128-tr1024-ev512-mlm-30
     object_store:
       object_store_hparams:
         s3:
