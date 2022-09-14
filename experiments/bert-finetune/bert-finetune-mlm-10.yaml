@@ -1,0 +1,39 @@
+command: set -e -x; cd cfork; python examples/glue/run_glue_trainer.py -f /mnt/config/parameters.yaml
+  --training_scheme finetune
+gpu_num: 8
+gpu_type: a100_80gb
+platform: r1z1
+run_name: bert-mlm-10-finetune
+image: mosaicml/pytorch_internal:latest
+integrations:
+- integration_type: wandb
+  project: bert-finetune-masking-ratio
+  group: finetune-bert-mlm-10
+  entity: jportes
+  tags:
+  - bert
+  - mlm
+  - mlm-10
+  - train-1024
+- git_branch: glue-entrypoint-refactor-workaround
+  git_repo: alextrott16/cfork
+  integration_type: git_repo
+  pip_install: .[all]
+
+parameters:
+  finetune_hparams:
+   # if paths are in ObjectStore, the following is expected to be defined
+    load_object_store: &bucket # The bucket to save checkpoints to, aliased as 'bucket' for future reference in this file
+      s3:
+        bucket: mosaicml-internal-checkpoints-bert
+    loggers:
+      object_store:
+        object_store_hparams:
+          *bucket                       # Refers to previously defined alias of 'bucket'
+      wandb: {}
+    finetune_ckpts:
+    - bert-128-tr1024-ev512-mlm-10-n88u/checkpoints/ep0-ba98000-rank0
+
+
+    run_name: bert-mlm-10-finetune
+    save_folder: checkpoints

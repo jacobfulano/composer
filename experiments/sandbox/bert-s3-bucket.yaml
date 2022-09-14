@@ -85,7 +85,10 @@ parameters:
   grad_accum: 'auto'
 
   save_folder: bert_checkpoints # The local directory for checkpoints, subsequently loaded to cloud
-  save_interval: 3500ba # Save checkpoints every 100 (previously 3500) batches
+  save_interval: 5ba # Save checkpoints every 100 (previously 3500) batches
+  save_artifact_name: 'jacob-bert-sweeps/{run_name}/checkpoints/ep{epoch}-ba{batch}-rank{rank}'
+  save_num_checkpoints_to_keep: 0
+  save_overwrite: True
 
   loggers:
     wandb:
@@ -93,7 +96,7 @@ parameters:
     object_store:
       object_store_hparams:
         s3:
-          bucket: jacob-bert-bucket  # replace with your bucket here
+          bucket: mosaicml-internal-checkpoints-bert  # replace with your bucket here
     tensorboard:
       flush_interval: 1
       rank_zero_only: false

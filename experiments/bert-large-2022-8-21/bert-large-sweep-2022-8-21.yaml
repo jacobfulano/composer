@@ -1,0 +1,39 @@
+run_name: "bert-large2-{mcli_sweep[parameters][train_batch_size]}bs-{mcli_sweep[parameters][optimizers][decoupled_adamw][lr]}lr-{mcli_sweep[parameters][optimizers][decoupled_adamw][weight_decay]}wd-{mcli_sweep[parameters][schedulers][linear_decay_with_warmup][t_warmup]}warmup"
+
+inherits:
+  - common/command.yaml
+  - common/platform.yaml
+  - common/integrations.yaml
+  - common/model.yaml
+
+parameters:
+  optimizers:
+    decoupled_adamw:
+      lr: no_replacement
+      weight_decay: no_replacement
+  schedulers:
+    linear_decay_with_warmup:
+      t_warmup: no_replacement
+  train_batch_size: no_replacement
+  eval_interval: no_replacement
+
+grid:
+  parameters.optimizers.decoupled_adamw.lr:
+  - 2.0e-4
+
+  parameters.optimizers.decoupled_adamw.weight_decay:
+  - 5.0e-6
+  - 1.0e-6
+  - 5.0e-7
+  - 1.0e-7
+
+  parameters.schedulers.linear_decay_with_warmup.t_warmup:
+  - 0.06dur
+  - 0.08dur
+  - 0.1dur
+
+  parameters.train_batch_size:
+  - 8192
+
+  parameters.eval_interval:
+  - 1500ba

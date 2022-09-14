@@ -1,0 +1,66 @@
+# Modified from glue_entrypoint
+run_name: bert-finetune-test
+gpu_type: a100_40gb
+gpu_num: 8
+platform: r7z2
+image: mosaicml/pytorch_internal:latest # mosaicml/composer:0.8.0 #
+integrations:
+  - integration_type: git_repo
+    git_repo: jacobfulano/composer # ex. mosaicml/composer
+    git_branch: bert-sweep
+    path: cfork # The folder to clone the code into
+    pip_install: .[all] # pip installs repo. Need [all] this for NLP dependencies, in your git repo
+  - integration_type: wandb
+    project: bert-finetune-masking-ratio
+    group: test
+    entity: jportes
+    tags:
+      - test
+command: set -x -e; cd cfork; composer examples/glue/run_glue_trainer.py -f /mnt/config/parameters.yaml --training_scheme finetune
+
+parameters:
+  # Run evaluation after every 1000 training steps
+  eval_interval: 1000ba
+
+  # Use the decoupled AdamW optimizer with learning rate warmup
+  optimizers:
+    decoupled_adamw:
+      lr: 5.0e-4                     # Peak learning rate
+      betas:
+        - 0.9
+        - 0.98
+      eps: 1.0e-06
+      weight_decay: 1.0e-5           # Amount of weight decay regularization
+  schedulers:
+    linear_decay_with_warmup:
+      t_warmup: 0.06dur              # Point when peak learning rate is reached
+      alpha_f: 0.02
+
+  max_duration: 275184000sp          # Subsample the training data for 275M samples
+  train_batch_size: 4000             # Number of training examples to use per update
+  eval_batch_size: 2000
+
+  precision: amp                     # Use mixed-precision training
+  grad_clip_norm: -1.0               # Turn off gradient clipping
+  grad_accum: 'auto'                 # Use automatic gradient accumulation to avoid OOMs
+  finetune_hparams:
+
+    # if paths are in ObjectStore, the following is expected to be defined
+    load_object_store: &bucket # The bucket to save checkpoints to, aliased as 'bucket' for future reference in this file
+      s3:
+        bucket: mosaicml-internal-checkpoints-bert
+    loggers:
+      object_store:
+        object_store_hparams:
+          *bucket                       # Refers to previously defined alias of 'bucket'
+      wandb:
+        tags:
+          - finetune
+
+    finetune_ckpts:
+      - bert-128-tr4096-ev512-mlm-30-15-dkdc/checkpoints/ep0-ba7000-rank0
+
+    save_folder: checkpoints
+    # load_object_store:
+    #   *bucket
+    # save_folder: *folder                # Refers to previously defined alias of 'folder'
