@@ -38,7 +38,8 @@ parameters:
   # Train the model on the English C4 corpus
   train_dataset:
    streaming_c4:
-     remote: s3://mosaicml-internal-dataset-c4/mds/1-gz/ # internal
+     #remote: s3://mosaicml-internal-dataset-c4/mds/1-gz/ # internal, changed September 19
+     remote: s3://mosaicml-internal-dataset-c4/mds/2/
      local: /tmp/mds-cache/mds-c4/
      split: train
      shuffle: true
@@ -99,7 +100,7 @@ parameters:
 
   loggers:
     wandb:
-      name: bert-ema-test4-bf16
+      name: bert-ema-test5-bf16-change-s3
       log_artifacts: true
       rank_zero_only: true
     object_store:
