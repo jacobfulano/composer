@@ -1,6 +1,6 @@
 # the run name is a unique identifier for the run
 # this will also be used as the default name for tensorboard, checkpoint directories, etc
-run_name: bert-ema-test8
+run_name: bert-ema-hl-500ba-ui-10ba
 
 gpu_type: a100_80gb
 gpu_num: 8
@@ -14,7 +14,7 @@ integrations:
     pip_install: --user --upgrade -e .[all] # pip installs repo. Need [all] this for NLP dependencies, in your git repo
   - integration_type: wandb
     project: bert-EMA-sweep
-    group: ema-test
+    group: ema-sweep
     entity: jportes
     tags:
       - ema
@@ -32,8 +32,8 @@ parameters:
 
   algorithms:
     - ema:
-        half_life: 1000ba
-        update_interval: 20ba
+        half_life: 500ba
+        update_interval: 10ba
 
   # Train the model on the English C4 corpus
   train_dataset:
@@ -47,7 +47,7 @@ parameters:
      max_seq_len: 128
      group_method: truncate
      mlm: true
-     mlm_probability: 0.40
+     mlm_probability: 0.15
 
   # Periodically evaluate the LanguageCrossEntropy and Masked Accuracy
   # on the validation split of the dataset.
@@ -93,14 +93,14 @@ parameters:
   grad_clip_norm: -1.0                # Turn off gradient clipping
   grad_accum: 'auto'
 
-  save_artifact_name: jacob-bert-large-sweeps/{run_name}/checkpoints/ep{epoch}-ba{batch}-rank{rank}
+  save_artifact_name: jacob-bert-ema-sweeps/{run_name}/checkpoints/ep{epoch}-ba{batch}-rank{rank}
   checkpoint_save_path: bert_checkpoints # The local directory for checkpoints, subsequently loaded to cloud, was save_folder
   checkpoint_save_interval: 3500ba # Save checkpoints every 100 (previously 3500) batches, was save_interval
 
 
   loggers:
     wandb:
-      name: bert-ema-test8
+      name: bert-ema-hl-500ba-ui-10ba
       log_artifacts: true
       rank_zero_only: true
     object_store:
