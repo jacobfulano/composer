@@ -31,9 +31,9 @@ parameters:
      pretrained_model_name: bert-base-uncased
 
   algorithms:
-  - ema:
-      half_life: 1000ba
-      update_interval: 20ba
+    - ema:
+        half_life: 1000ba
+        update_interval: 20ba
 
   # Train the model on the English C4 corpus
   train_dataset:
@@ -88,7 +88,7 @@ parameters:
   train_batch_size: 4096              # Number of training examples to use per update
   eval_batch_size: 2048    # 1024 did not work for 1 40GB machine
 
-  precision: amp                      # Use mixed-precision training
+  precision: bf16                      # Use mixed-precision training
   grad_clip_norm: -1.0                # Turn off gradient clipping
   grad_accum: 'auto'
 
@@ -99,7 +99,7 @@ parameters:
 
   loggers:
     wandb:
-      name: bert-ema-test3
+      name: bert-ema-test4-bf16
       log_artifacts: true
       rank_zero_only: true
     object_store:
