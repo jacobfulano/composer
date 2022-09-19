@@ -114,3 +114,8 @@ parameters:
       log_to_console: true
       progress_bar: false             # Disable TQDM progress bars for batch jobs
       #python_log_level: batch        # Print every batch, was console_log_level
+
+  callbacks:
+    speed_monitor:
+      window_size: 50
+    lr_monitor: {}
