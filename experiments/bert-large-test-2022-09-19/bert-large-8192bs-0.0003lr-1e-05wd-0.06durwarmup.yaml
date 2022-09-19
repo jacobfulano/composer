@@ -6,7 +6,7 @@ integrations:
 - entity: mosaic-ml
   integration_type: wandb
   project: bert-large-run
-- git_branch: release/v0.9.0
+- git_branch: release/v0.8.0
   git_repo: mosaicml/composer
   integration_type: git_repo
   pip_install: --user --upgrade -e .[all]
@@ -30,7 +30,7 @@ parameters:
         max_seq_len: 128
         mlm: true
         mlm_probability: 0.15
-        remote: s3://allenai-c4/mds/1-gz/
+        remote: s3://mosaicml-internal-dataset-c4/mds/1/
         shuffle: false
         split: val
         tokenizer_name: bert-large-uncased
@@ -83,7 +83,7 @@ parameters:
       max_seq_len: 128
       mlm: true
       mlm_probability: 0.15
-      remote: s3://allenai-c4/mds/1-gz/
+      remote: s3://mosaicml-internal-dataset-c4/mds/1/
       shuffle: true
       split: train
       tokenizer_name: bert-large-uncased
