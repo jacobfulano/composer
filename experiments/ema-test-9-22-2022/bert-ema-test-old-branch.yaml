@@ -11,7 +11,7 @@ image: mosaicml/pytorch_internal:latest # mosaicml/composer:0.8.0 #
 integrations:
   - integration_type: git_repo
     git_repo: jacobfulano/composer # ex. mosaicml/composer
-    git_branch: dev
+    git_branch: ema-sweep 1a75bfcf4865b31896aa9b94a21eda90d3be692f
     path: cfork # The folder to clone the code into
     pip_install: --user --upgrade -e .[all] # pip installs repo. Need [all] this for NLP dependencies, in your git repo
   - integration_type: wandb
@@ -24,7 +24,7 @@ command: set -x -e; cd cfork; composer examples/run_composer_trainer.py -f /mnt/
 
 
 parameters:
-  seed: 5456666
+  seed: 1589
   # Use a bert-base model, initialized from scratch
   model:
    bert:
@@ -35,7 +35,7 @@ parameters:
   algorithms:
     - ema:
         half_life: 1000ba
-        update_interval: 3ba
+        update_interval: 2ba
 
   # Train the model on the English C4 corpus
   train_dataset:
