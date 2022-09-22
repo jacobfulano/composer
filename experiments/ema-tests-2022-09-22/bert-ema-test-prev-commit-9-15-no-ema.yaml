@@ -1,6 +1,6 @@
 # the run name is a unique identifier for the run
 # this will also be used as the default name for tensorboard, checkpoint directories, etc
-run_name: bert-ema-hl-1000ba-ui-2ba
+run_name: bert-ema-test-prev-commit-9-15-no-ema
 
 optimization_level: 0 # ensures mcli agent is turned off
 
@@ -11,7 +11,8 @@ image: mosaicml/pytorch_internal:latest # mosaicml/composer:0.8.0 #
 integrations:
   - integration_type: git_repo
     git_repo: jacobfulano/composer # ex. mosaicml/composer
-    git_branch: ema-sweep 1a75bfcf4865b31896aa9b94a21eda90d3be692f
+    #git_branch: ema-sweep
+    git_commit: "ca6bb5e9e57e8ed8abf5dd64aba3a959e5eba53e" # non-named commit from 9/15
     path: cfork # The folder to clone the code into
     pip_install: --user --upgrade -e .[all] # pip installs repo. Need [all] this for NLP dependencies, in your git repo
   - integration_type: wandb
@@ -20,6 +21,7 @@ integrations:
     entity: jportes
     tags:
       - ema
+      - test
 command: set -x -e; cd cfork; composer examples/run_composer_trainer.py -f /mnt/config/parameters.yaml
 
 
@@ -31,11 +33,6 @@ parameters:
      use_pretrained: false
      tokenizer_name: bert-base-uncased
      pretrained_model_name: bert-base-uncased
-
-  algorithms:
-    - ema:
-        half_life: 1000ba
-        update_interval: 2ba
 
   # Train the model on the English C4 corpus
   train_dataset:
@@ -102,7 +99,7 @@ parameters:
 
   loggers:
     wandb:
-      name: bert-ema-hl-1000ba-ui-2ba
+      name: bert-ema-test-prev-commit-9-15-no-ema
       log_artifacts: true
       rank_zero_only: true
     object_store:
