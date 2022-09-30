@@ -3,16 +3,16 @@ command: set -e -x; cd cfork; python examples/glue/run_glue_trainer.py -f /mnt/c
 gpu_num: 8
 gpu_type: a100_80gb
 platform: r1z1
-run_name: ema-finetune-test
+run_name: baseline-no-ema-finetune
 image: mosaicml/pytorch_internal:latest
 optimization_level: 0
 integrations:
 - integration_type: wandb
   project: ema-finetune
-  group: ema-finetune
+  group: baseline-finetune-no-ema
   entity: mosaic-ml
   tags:
-  - test
+  - finetune
 - git_branch: glue-entrypoint-refactor-workaround
   git_repo: alextrott16/cfork
   #git_branch: dev
@@ -33,10 +33,11 @@ parameters:
           *bucket                       # Refers to previously defined alias of 'bucket'
       wandb: {}
     finetune_ckpts:
-    - jacob-ema-sweeps-2/bert-base-ema-hl-1000ba-ui-1ba-seed-2023/checkpoints/ep0-ba7000-rank0
-    - jacob-ema-sweeps-2/bert-base-ema-hl-1000ba-ui-1ba-seed-2024/checkpoints/ep0-ba7000-rank0
+    - jacob-ema-sweeps-2/bert-base-no-ema-seed-2020/checkpoints/ep0-ba7000-rank0
+    - jacob-ema-sweeps-2/bert-base-no-ema-seed-2022/checkpoints/ep0-ba7000-rank0
+    - jacob-ema-sweeps-2/bert-base-no-ema-seed-2023/checkpoints/ep0-ba7000-rank0
 
 
-    run_name: ema-finetune-test
+    run_name: baseline-no-ema-finetune
     save_folder: jacob-ema-sweeps-2-finetuning/{run_name}/checkpoints/
     #save_artifact_name: jacob-ema-sweeps-2-finetuning/{run_name}/checkpoints/ep{epoch}-ba{batch}-rank{rank}

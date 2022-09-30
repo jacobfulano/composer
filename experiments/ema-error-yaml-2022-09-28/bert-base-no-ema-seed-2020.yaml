@@ -67,7 +67,7 @@ parameters:
       weight_decay: 1.0e-05
   precision: amp
   run_name: bert-base-no-ema-seed-2020
-  save_artifact_name: jacob-ema-sweeps-2/{run_name}/checkpoints/ep{epoch}-ba{batch}-rank{rank}
+  save_artifact_name: jacob-ema-sweeps-2/{run_name}/checkpoints/ep{epoch}-ba{batch}-rank{rank}-{total_wct}wct
   schedulers:
     linear_decay_with_warmup:
       alpha_f: 0.02
