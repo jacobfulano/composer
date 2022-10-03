@@ -1,0 +1,43 @@
+command: set -e -x; cd cfork; python examples/glue/run_glue_trainer.py -f /mnt/config/parameters.yaml
+  --training_scheme finetune
+gpu_num: 8
+gpu_type: a100_80gb
+platform: r1z1
+run_name: pretrain-hl-1000ba-ui-1ba-finetune-no-ema
+image: mosaicml/pytorch_internal:latest
+optimization_level: 0
+integrations:
+- integration_type: wandb
+  project: ema-finetune-2
+  group: pretrain-hl-1000ba-ui-1ba-finetune-no-ema
+  entity: mosaic-ml
+  tags:
+  - finetune
+- git_branch: glue-entrypoint-refactor-workaround
+  git_repo: alextrott16/cfork
+  #git_branch: dev
+  #git_repo: mosaicml/composer
+  integration_type: git_repo
+  path: cfork
+  pip_install: .[all]
+
+parameters:
+  finetune_hparams:
+   # if paths are in ObjectStore, the following is expected to be defined
+    load_object_store: &bucket # The bucket to save checkpoints to, aliased as 'bucket' for future reference in this file
+      s3:
+        bucket: mosaicml-internal-checkpoints-bert
+    loggers:
+      object_store:
+        object_store_hparams:
+          *bucket                       # Refers to previously defined alias of 'bucket'
+      wandb: {}
+    finetune_ckpts:
+    - jacob-ema-sweeps-2/bert-base-ema-hl-1000ba-ui-1ba-seed-2020/checkpoints/ep0-ba67184-rank0
+    - jacob-ema-sweeps-2/bert-base-ema-hl-1000ba-ui-1ba-seed-2023/checkpoints/ep0-ba67184-rank0
+    - jacob-ema-sweeps-2/bert-base-ema-hl-1000ba-ui-1ba-seed-2024/checkpoints/ep0-ba67184-rank0
+
+
+    run_name: pretrain-hl-1000ba-ui-1ba-finetune-no-ema
+    save_folder: jacob-ema-sweeps-2-finetuning-2022-10-03/{run_name}/checkpoints/
+    #save_artifact_name: jacob-ema-sweeps-2-finetuning/{run_name}/checkpoints/ep{epoch}-ba{batch}-rank{rank}
