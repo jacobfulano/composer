@@ -1,0 +1,95 @@
+command: composer composer/examples/run_composer_trainer.py -f /mnt/config/parameters.yaml
+gpu_num: 8
+gpu_type: a100_80gb
+image: mosaicml/pytorch:latest
+integrations:
+- entity: mosaic-ml
+  integration_type: wandb
+  project: ema-sweep-2
+- git_branch: dev
+  git_repo: mosaicml/composer
+  integration_type: git_repo
+  pip_install: --user --upgrade -e .[all]
+optimization_level: 0
+parameters:
+  algorithms:
+    ema:
+      half_life: 5000ba
+      update_interval: 5ba
+  callbacks:
+    lr_monitor: null
+    speed_monitor: null
+  checkpoint_save_interval: 3500ba
+  checkpoint_save_path: bert_checkpoints
+  dataloader:
+    num_workers: 8
+    persistent_workers: true
+    pin_memory: true
+    prefetch_factor: 2
+    timeout: 0
+  eval_batch_size: 2048
+  eval_interval: 3500ba
+  evaluators:
+  - eval_dataset:
+      streaming_c4:
+        group_method: truncate
+        local: /tmp/mds-cache/mds-c4/
+        max_seq_len: 128
+        mlm: true
+        mlm_probability: 0.15
+        remote: s3://allenai-c4/mds/1-gz/
+        shuffle: false
+        split: val
+        tokenizer_name: bert-base-uncased
+    label: bert_pre_training
+    metric_names:
+    - LanguageCrossEntropy
+    - MaskedAccuracy
+  grad_accum: auto
+  grad_clip_norm: -1.0
+  loggers:
+    object_store:
+      object_store_hparams:
+        s3:
+          bucket: mosaicml-internal-checkpoints-bert
+    progress_bar: {}
+    wandb:
+      log_artifacts: true
+      rank_zero_only: true
+  max_duration: 275184000sp
+  model:
+    bert:
+      pretrained_model_name: bert-base-uncased
+      tokenizer_name: bert-base-uncased
+      use_pretrained: false
+  optimizers:
+    decoupled_adamw:
+      betas:
+      - 0.9
+      - 0.98
+      eps: 1.0e-06
+      lr: 0.0005
+      weight_decay: 1.0e-05
+  precision: amp
+  run_name: bert-base-ema-halflife-5000ba-updateinterval-5ba-seed-2020
+  save_artifact_name: jacob-ema-sweeps-2/{run_name}/checkpoints/ep{epoch}-ba{batch}-rank{rank}
+  save_overwrite: true
+  schedulers:
+    linear_decay_with_warmup:
+      alpha_f: 0.02
+      t_warmup: 0.06dur
+  seed: 2020
+  train_batch_size: 4096
+  train_dataset:
+    streaming_c4:
+      group_method: truncate
+      local: /tmp/mds-cache/mds-c4/
+      max_seq_len: 128
+      mlm: true
+      mlm_probability: 0.15
+      remote: s3://allenai-c4/mds/1-gz/
+      shuffle: true
+      split: train
+      tokenizer_name: bert-base-uncased
+platform: r1z1
+run_name: bert-base-ema-halflife-5000ba-updateinterval-5ba-seed-2020
