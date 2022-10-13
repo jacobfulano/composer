@@ -7,7 +7,7 @@ integrations:
 - entity: mosaic-ml
   integration_type: wandb
   project: sam-sweep
-  group: rho-0.05-int-3
+  group: rho-0.05-int-10
   tags:
   - sweep
 - git_branch: dev
@@ -20,7 +20,7 @@ parameters:
   - sam:
       rho: 0.05
       epsilon: 1e-12
-      interval: 3
+      interval: 10
 
   callbacks:
     lr_monitor: null
@@ -77,7 +77,7 @@ parameters:
       lr: 0.0005
       weight_decay: 1.0e-05
   precision: amp
-  run_name: bert-sam-sweep-interval-3
+  run_name: bert-sam-sweep-interval-10
   save_artifact_name: jacob-sam-sweeps/{run_name}/checkpoints/ep{epoch}-ba{batch}-rank{rank}
   schedulers:
     linear_decay_with_warmup:
@@ -97,4 +97,4 @@ parameters:
       split: train
       tokenizer_name: bert-base-uncased
 platform: r1z1
-run_name: bert-sam-sweep-interval-3
+run_name: bert-sam-sweep-interval-10

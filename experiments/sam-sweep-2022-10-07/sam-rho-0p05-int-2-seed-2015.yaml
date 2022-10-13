@@ -79,6 +79,7 @@ parameters:
   precision: amp
   run_name: bert-sam-sweep-interval-2
   save_artifact_name: jacob-sam-sweeps/{run_name}/checkpoints/ep{epoch}-ba{batch}-rank{rank}
+  save_overwrite: True # be careful here, will overwrite
   schedulers:
     linear_decay_with_warmup:
       alpha_f: 0.02
