@@ -1,0 +1,128 @@
+# the run name is a unique identifier for the run
+# this will also be used as the default name for tensorboard, checkpoint directories, etc
+run_name: bert-ema-hl-1000ba-ui-1ba-es-5000ba-af-p2
+
+optimization_level: 0 # ensures mcli agent is turned off
+
+gpu_type: a100_40gb
+gpu_num: 8
+platform: r7z2
+image: mosaicml/pytorch_internal:latest # mosaicml/composer:0.8.0 #
+integrations:
+  - integration_type: git_repo
+    git_repo: jacobfulano/composer # ex. mosaicml/composer
+    git_branch: ema-sweep
+    path: cfork # The folder to clone the code into
+    pip_install: --user --upgrade -e .[all] # pip installs repo. Need [all] this for NLP dependencies, in your git repo
+  - integration_type: wandb
+    project: bert-EMA-sweep
+    group: ema-sweep-af-p2
+    entity: jportes
+    tags:
+      - ema
+      - lr
+command: set -x -e; cd cfork; composer examples/run_composer_trainer.py -f /mnt/config/parameters.yaml
+
+
+parameters:
+  seed: 1773
+  # Use a bert-base model, initialized from scratch
+  model:
+   bert:
+     use_pretrained: false
+     tokenizer_name: bert-base-uncased
+     pretrained_model_name: bert-base-uncased
+
+  algorithms:
+    - ema:
+        half_life: 1000ba
+        update_interval: 1ba
+        ema_start: 5000ba
+
+  # Train the model on the English C4 corpus
+  train_dataset:
+   streaming_c4:
+     #remote: s3://mosaicml-internal-dataset-c4/mds/1-gz/ # internal, changed September 19
+     version: 2
+     remote: s3://mosaicml-internal-dataset-c4/mds/2/
+     local: /tmp/mds-cache/mds-c4/
+     split: train
+     shuffle: true
+     tokenizer_name: bert-base-uncased
+     max_seq_len: 128
+     group_method: truncate
+     mlm: true
+     mlm_probability: 0.15
+
+  # Periodically evaluate the LanguageCrossEntropy and Masked Accuracy
+  # on the validation split of the dataset.
+  evaluators:
+   evaluator:
+     label: bert_pre_training
+     eval_dataset:
+       streaming_c4:
+         #remote: s3://mosaicml-internal-dataset-c4/mds/1-gz/
+         version: 2
+         remote: s3://mosaicml-internal-dataset-c4/mds/2/
+         local: /tmp/mds-cache/mds-c4/
+         split: val
+         shuffle: false
+         tokenizer_name: bert-base-uncased
+         max_seq_len: 128
+         group_method: truncate
+         mlm: true
+         mlm_probability: 0.15
+     metric_names:
+       - LanguageCrossEntropy
+       - MaskedAccuracy
+  # Run evaluation after every 1000 training steps
+  eval_interval: 1000ba # prev 1000ba
+
+  # Use the decoupled AdamW optimizer with learning rate warmup
+  optimizers:
+   decoupled_adamw:
+     lr: 5.0e-4                       # Peak learning rate
+     betas:
+       - 0.9
+       - 0.98
+     eps: 1.0e-06
+     weight_decay: 1.0e-5             # Amount of weight decay regularization
+  schedulers:
+   linear_decay_with_warmup:
+     t_warmup: 0.06dur                # Point when peak learning rate is reached
+     alpha_f: 0.2 # was 0.02
+
+  max_duration: 275184000sp              # previously 275184000sp  # Subsample the training data for 275M samples
+  train_batch_size: 4096              # Number of training examples to use per update
+  eval_batch_size: 2048    # 1024 did not work for 1 40GB machine
+
+  precision: bf16                      # Use mixed-precision training
+  grad_clip_norm: -1.0                # Turn off gradient clipping
+  grad_accum: 'auto'
+
+  save_artifact_name: jacob-bert-ema-sweeps/{run_name}/checkpoints/ep{epoch}-ba{batch}-rank{rank}
+  save_folder: bert_checkpoints # The local directory for checkpoints, subsequently loaded to cloud, was save_folder
+  save_interval: 3500ba # Save checkpoints every 100 (previously 3500) batches, was save_interval
+
+
+  loggers:
+    wandb:
+      name: bert-ema-hl-1000ba-ui-1ba-es-5000ba-af-p2
+      log_artifacts: true
+      rank_zero_only: true
+    object_store:
+      object_store_hparams:
+        s3:
+          bucket: mosaicml-internal-checkpoints-bert  # replace with your bucket here
+    tensorboard:
+      flush_interval: 1
+      rank_zero_only: false
+    progress_bar:                     # Show output training progress updates
+      log_to_console: true
+      progress_bar: false             # Disable TQDM progress bars for batch jobs
+      #python_log_level: batch        # Print every batch, was console_log_level
+
+  callbacks:
+    speed_monitor:
+      window_size: 50
+    lr_monitor: {}
