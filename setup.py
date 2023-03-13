@@ -133,7 +133,7 @@ extra_deps['dev'] = [
     'mock-ssh-server==0.9.1',
     'cryptography==38.0.4',
     'pytest-httpserver>=1.0.4,<1.1',
-    'setuptools<=59.5.0',
+    'setuptools<=67.6.0',
 ]
 
 extra_deps['deepspeed'] = [
